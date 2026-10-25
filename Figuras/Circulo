@@ -1,0 +1,18 @@
+package figura;
+
+class Circulo extends Figura{
+    private double radio;
+
+    public Circulo(String nombre, double radio){
+        super(nombre);
+        this.radio = radio;
+    }
+    @Override
+    public double calcularArea(){
+        return Math.PI * radio * radio;
+    }
+    @Override
+    public String toString(){
+        return "CIRCULO:" + super.toString() + "\nRadio:" + radio + "\nArea:" + String.format("%.2f", calcularArea()) + "\n";
+    }
+}
