@@ -1,0 +1,18 @@
+package figura;
+
+class Cuadrado extends Figura{
+    private double lado;
+
+    public Cuadrado(String nombre, double lado){
+        super(nombre);
+        this.lado = lado;
+    }
+    @Override
+    public double calcularArea(){
+        return lado * lado;
+    }
+    @Override
+    public String toString(){
+        return "CUADRADO:" + super.toString() + "\nLado:" + lado + "\nArea:" + String.format("%.2f", calcularArea()) + "\n";
+    }
+}
