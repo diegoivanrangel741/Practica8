@@ -1,0 +1,20 @@
+package figura;
+
+class Pentagono extends Figura{
+    private double lado;
+    private double apotema;
+
+    public Pentagono(String nombre, double lado, double apotema){
+        super(nombre);
+        this.lado = lado;
+        this.apotema = apotema;
+    }
+    @Override
+    public double calcularArea(){
+        return (5 * lado * apotema) / 2;
+    }
+    @Override
+    public String toString(){
+        return "PENTAGONO:" + super.toString() + "\nLado:" + lado + "\nApotema:" + apotema + "\nArea:" + String.format("%.2f", calcularArea()) + "\n";
+    }
+}
