@@ -1,0 +1,271 @@
+package Practi8;
+
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Main {
+
+    static Random azar = new Random();
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        Mago merlin = new Mago("Merlín", 169, 100, 50);
+        Guerrero boris = new Guerrero("Boris", 250, 100);
+        Aldeano mercader = new Aldeano("Mercader", 50);
+
+        Equipo equipo = new Equipo();
+        equipo.heroes.add(merlin);
+        equipo.heroes.add(boris);
+        equipo.monedas = 50;
+
+        ArrayList<Personaje> enemigos = new ArrayList<>();
+        enemigos.add(new Ogro("Ogro gigante", 300, 40));
+        enemigos.add(new Ogro("Ogro chico", 100, 15));
+        enemigos.add(new Lobo("Lobo feroz", 80, 12));
+        enemigos.add(new Lobo("Lobo feroz", 80, 12));
+
+        boolean huyeron = false;
+        int ronda = 0;
+
+        while (hayVivos(equipo.heroes) && hayVivos(enemigos) && !huyeron) {
+            ronda++;
+            System.out.println("\n===== RONDA " + ronda + " =====");
+
+            boolean merlinActuo = !merlin.sigueVivo();
+            boolean borisActuo = !boris.sigueVivo();
+
+            // Fase de héroes
+            while (!(merlinActuo && borisActuo) && !huyeron && hayVivos(enemigos)) {
+                System.out.println("\n¿Quién actúa?");
+                System.out.println("1) " + merlin.nombre);
+                System.out.println("2) " + boris.nombre);
+                System.out.println("3) Huir");
+                int opcion = sc.nextInt();
+
+                switch (opcion) {
+                    case 1:
+                        if (merlinActuo) {
+                            System.out.println(merlin.nombre + " ya no puede actuar esta ronda");
+                        } else if (!merlin.sigueVivo()) {
+                            System.out.println(merlin.nombre + " ya no puede actuar");
+                            merlinActuo = true;
+                        } else {
+                            merlinActuo = menuPersonaje(merlin, sc, enemigos, equipo, mercader);
+                        }
+                        break;
+                    case 2:
+                        if (borisActuo) {
+                            System.out.println(boris.nombre + " ya no puede actuar esta ronda");
+                        } else if (!boris.sigueVivo()) {
+                            System.out.println(boris.nombre + " ya no puede actuar");
+                            borisActuo = true;
+                        } else {
+                            borisActuo = menuPersonaje(boris, sc, enemigos, equipo, mercader);
+                        }
+                        break;
+                    case 3:
+                        System.out.println("Huyeron");
+                        huyeron = true;
+                        break;
+                    default:
+                        System.out.println("Opción no válida");
+                }
+                recogerBotin(enemigos, equipo);
+            }
+
+            // Fase de villanos
+            if (!huyeron && hayVivos(enemigos)) {
+                turnoEnemigos(enemigos, equipo.heroes);
+            }
+            if (!huyeron) {
+                mostrarEstados(equipo, enemigos);
+            }
+        }
+
+        if (huyeron) {
+            System.out.println("El equipo escapó.");
+        } else if (hayVivos(equipo.heroes)) {
+            System.out.println("¡Felicidades, ganaste! Monedas: " + equipo.monedas);
+        } else {
+            System.out.println("Todos los héroes cayeron... Perdiste.");
+        }
+
+        sc.close();
+    }
+
+    // ---------- Menús ----------
+    static boolean menuPersonaje(Personaje heroe, Scanner sc, ArrayList<Personaje> enemigos,Equipo equipo, Aldeano mercader) {
+        boolean ataco = false;
+
+        System.out.println("¿Qué hará " + heroe.nombre + "?");
+        System.out.println("1) Ataque");
+        System.out.println("2) Mochila");
+        System.out.println("3) Aldeano");
+        System.out.println("4) Pasar turno");
+        int opcion = sc.nextInt();
+
+        switch (opcion) {
+            case 1:
+                ataco = menuAtaque(heroe, sc, enemigos);
+                break;
+            case 2:
+                menuMochila(sc, equipo);
+                break;
+            case 3:
+                menuAldeano(sc, equipo, mercader);
+                break;
+            case 4:
+                System.out.println(heroe.nombre + " pasa su turno");
+                ataco = true;
+                break;
+            default:
+                System.out.println("Opción no válida");
+        }
+        return ataco;
+    }
+
+    static boolean menuAtaque(Personaje heroe, Scanner sc, ArrayList<Personaje> enemigos) {
+        if (heroe instanceof Mago) {
+            Mago mago = (Mago) heroe;
+            System.out.println("1) Rayo de hielo   2) Bola de fuego");
+            int op = sc.nextInt();
+            if (op == 1) {
+                return mago.rayoDeHielo(elegirObjetivo(enemigos, sc));
+            }
+            if (op == 2) {
+                return mago.bolaFuego(enemigos);
+            }
+        } else if (heroe instanceof Guerrero) {
+            Guerrero guerrero = (Guerrero) heroe;
+            System.out.println("1) Espadazo   2) Martillazo");
+            int op = sc.nextInt();
+            if (op == 1 || op == 2) {
+                Personaje objetivo = elegirObjetivo(enemigos, sc);
+                if (op == 1) {
+                    guerrero.espadazo(objetivo);
+                    return true;
+                }
+                if (op == 2) {
+                    guerrero.martillazo(objetivo);
+                    return true;
+                }
+            }
+        }
+        System.out.println("Opción no válida");
+        return false;
+    }
+
+    static void menuAldeano(Scanner sc, Equipo equipo, Aldeano mercader) {
+        System.out.println("Monedas: " + equipo.monedas);
+        System.out.println("1) Poción chica (20)   2) Poción grande (50)   3) Poción de mana (40)");
+        int pocion = sc.nextInt();
+        System.out.println("¿Para quién?");
+        Personaje comprador = elegirObjetivo(equipo.heroes, sc);
+        mercader.venderPocion(equipo, comprador, pocion);
+    }
+
+    static void menuMochila(Scanner sc, Equipo equipo) {
+        System.out.println("1) Chica x" + equipo.pocionesChicas
+                + "   2) Grande x" + equipo.pocionesGrandes
+                + "   3) Mana x" + equipo.pocionesMana);
+        int op = sc.nextInt();
+
+        if (op == 1 && equipo.pocionesChicas > 0) {
+            elegirObjetivo(equipo.heroes, sc).curar(30);
+            equipo.pocionesChicas--;
+        } else if (op == 2 && equipo.pocionesGrandes > 0) {
+            elegirObjetivo(equipo.heroes, sc).curar(80);
+            equipo.pocionesGrandes--;
+        } else if (op == 3 && equipo.pocionesMana > 0) {
+            Personaje objetivo = elegirObjetivo(equipo.heroes, sc);
+            if (objetivo instanceof Mago) {
+                Mago mago = (Mago) objetivo;
+                mago.recuperarMana(50);
+                equipo.pocionesMana--;
+            } else {
+                System.out.println("Solo sirve para magos");
+            }
+        } else {
+            System.out.println("No tienes de esa poción");
+        }
+    }
+
+    // ---------- Turno de los villanos ----------
+    static void turnoEnemigos(ArrayList<Personaje> enemigos, ArrayList<Personaje> heroes) {
+        System.out.println("\n--- Turno de los villanos ---");
+        for (Personaje enemigo : enemigos) {
+            if (!enemigo.sigueVivo() || !hayVivos(heroes)) {
+                continue;
+            }
+            if (enemigo instanceof Lobo) {
+                Lobo lobo = (Lobo) enemigo;
+                lobo.atacaManada(heroes);
+            } else if (enemigo instanceof Villano) {
+                Villano villano = (Villano) enemigo;
+                villano.atacar(heroeAlAzar(heroes));
+            }
+        }
+    }
+
+    // ---------- Auxiliares ----------
+    static Personaje elegirObjetivo(ArrayList<Personaje> lista, Scanner sc) {
+        ArrayList<Personaje> vivos = new ArrayList<>();
+        for (Personaje p : lista) {
+            if (p.sigueVivo()) {
+                vivos.add(p);
+            }
+        }
+        for (int i = 0; i < vivos.size(); i++) {
+            System.out.println((i + 1) + ") " + vivos.get(i).nombre);
+        }
+        int n;
+        do {
+            n = sc.nextInt();
+        } while (n < 1 || n > vivos.size());
+        return vivos.get(n - 1);
+    }
+
+    static Personaje heroeAlAzar(ArrayList<Personaje> heroes) {
+        ArrayList<Personaje> vivos = new ArrayList<>();
+        for (Personaje h : heroes) {
+            if (h.sigueVivo()) {
+                vivos.add(h);
+            }
+        }
+        return vivos.get(azar.nextInt(vivos.size()));
+    }
+
+    static void recogerBotin(ArrayList<Personaje> enemigos, Equipo equipo) {
+        for (Personaje e : enemigos) {
+            if (!e.sigueVivo()) {
+                int botin = 100 + azar.nextInt(51);
+                equipo.monedas += botin;
+                System.out.println(e.nombre + " suelta " + botin + " monedas");
+            }
+        }
+        enemigos.removeIf(e -> !e.sigueVivo());
+    }
+
+    static boolean hayVivos(ArrayList<Personaje> lista) {
+        for (Personaje p : lista) {
+            if (p.sigueVivo()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static void mostrarEstados(Equipo equipo, ArrayList<Personaje> enemigos) {
+        System.out.println("\n===== FIN DE RONDA =====");
+        for (Personaje h : equipo.heroes) {
+            h.mostrarEstado();
+        }
+        System.out.println("Monedas: " + equipo.monedas);
+        for (Personaje e : enemigos) {
+            e.mostrarEstado();
+        }
+    }
+}
