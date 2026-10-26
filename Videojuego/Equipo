@@ -1,0 +1,12 @@
+package Practi8;
+import java.util.ArrayList;
+
+public class Equipo {
+
+    public ArrayList<Personaje> heroes = new ArrayList<>();
+    public int monedas;
+    public int pocionesChicas = 0;
+    public int pocionesGrandes = 0;
+    public int pocionesMana = 0;
+
+}
