@@ -1,0 +1,61 @@
+package Practi8;
+
+import java.util.ArrayList;
+
+
+public class Mago extends Personaje {
+    private int mana;
+    private int manaMaxima;
+    private int escudoMaximo;
+
+    public Mago(String nombre, int vidaMaxima, int manaMaxima, int escudoMaximo) {
+        super(nombre, vidaMaxima);
+        this.manaMaxima = manaMaxima;
+        this.mana = manaMaxima;
+        this.escudoMaximo = escudoMaximo;
+        this.escudo = 0;
+    }
+
+    public boolean rayoDeHielo(Personaje objetivo) {
+        int costo = 25;
+        if (mana < costo) {
+            System.out.println(nombre +" " + "no tiene suficiente mana");
+            return false;
+        }
+        mana -= costo;
+        System.out.println(nombre +" "+  "ha lanzado un rayo de Hielo");
+        objetivo.danioRecibido(50);
+        return true;
+
+
+    }
+
+    public boolean bolaFuego(ArrayList <Personaje> enemigos) {
+        int costo = 40;
+        if (mana < costo) {
+            System.out.println(nombre + "no tiene suficiente mana");
+            return false;
+        }
+
+        mana -= costo;
+        System.out.println(nombre + "ha invocado una bola de fuego");
+        for (Personaje enemigo : enemigos) {
+
+            enemigo.danioRecibido(30);
+        }
+
+        return true;
+    }
+
+    public void recuperarMana(int cantidad) {
+        mana += cantidad;
+
+        if (mana > manaMaxima) {
+            mana = manaMaxima;
+        }
+
+        System.out.println(nombre + " ha recuperado mana");
+    }
+
+
+}
