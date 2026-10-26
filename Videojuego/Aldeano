@@ -1,0 +1,49 @@
+package Practi8;
+public class Aldeano extends Personaje {
+
+    public Aldeano(String nombre, int vidaMaxima) {
+        super(nombre, vidaMaxima);
+    }
+
+    public void venderPocion(Equipo equipo, Personaje comprador, int opcion) {
+        int precio;
+        int curacion;
+
+        switch (opcion) {
+            case 1:
+                precio = 20;
+                curacion = 30;
+                break;
+            case 2:
+                precio = 50;
+                curacion = 80;
+                break;
+            case 3:
+                precio = 40;
+                curacion = 0;
+                break;
+            default:
+                System.out.println("opcion no válida");
+                return;
+        }
+
+        if (equipo.monedas < precio) {
+            System.out.println("no le alcanzan joven");
+            return;
+        }
+
+        if (opcion == 3 && !(comprador instanceof Mago)) {
+            System.out.println("Solo sirve para magos");
+            return;
+        }
+
+        equipo.monedas -= precio;
+
+        if (opcion == 3) {
+            Mago mago = (Mago) comprador;
+            mago.recuperarMana(50);
+        } else {
+            comprador.curar(curacion);
+        }
+    }
+}
