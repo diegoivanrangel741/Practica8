@@ -1,0 +1,11 @@
+package Practi8;
+
+
+public class Ogro extends Villano{
+
+    public Ogro(String nombre, int vidaMaxima, int danioAtaque){
+        super (nombre, vidaMaxima, danioAtaque);
+
+    }
+
+}
