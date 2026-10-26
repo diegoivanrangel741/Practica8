@@ -1,0 +1,20 @@
+package Practi8;
+
+import java.util.ArrayList;
+
+public class Lobo extends Villano {
+
+    public Lobo(String nombre, int vidaMaxima, int danioAtaque) {
+        super(nombre, vidaMaxima, danioAtaque);
+
+    }
+
+    public void atacaManada(ArrayList<Personaje> heroes){
+
+        System.out.println(nombre+ " "+ "ataca en manada ");
+        for(Personaje heroe : heroes){
+            heroe.danioRecibido(danioAtaque);
+        }
+
+    }
+}
