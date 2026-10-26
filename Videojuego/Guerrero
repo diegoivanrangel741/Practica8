@@ -1,0 +1,30 @@
+package Practi8;
+
+public class Guerrero extends Personaje{
+
+    private int escudoMaximo;
+
+    public Guerrero(String nombre, int vidaMaxima, int escudoMaximo){
+        super (nombre, vidaMaxima);
+        this.escudoMaximo = escudoMaximo;
+        this.escudo = 0;
+
+    }
+
+    public void espadazo(Personaje objetivo){
+
+        System.out.println(nombre + " "+ "ataca con su espada a "+ objetivo.nombre);
+        objetivo.danioRecibido(35);
+    }
+
+    public void martillazo(Personaje objetivo) {
+        if (objetivo.vida <= objetivo.vidaMaxima * 0.35) {
+            System.out.println(nombre + " ejecuta a " + objetivo.nombre + " con un martillazo");
+            objetivo.danioRecibido(objetivo.vida);
+
+        } else {
+            System.out.println(nombre + " golpea a " + objetivo.nombre + " con su martillo");
+            objetivo.danioRecibido(25);
+        }
+    }
+}
