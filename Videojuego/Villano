@@ -1,0 +1,16 @@
+package Practi8;
+
+
+public class Villano extends Personaje {
+    protected int danioAtaque;
+
+    public Villano(String nombre, int vidaMaxima, int danioAtaque) {
+        super(nombre, vidaMaxima);
+        this.danioAtaque = danioAtaque;
+    }
+
+    public void atacar(Personaje objetivo) {
+        System.out.println(nombre + " ataca a " + objetivo.nombre);
+        objetivo.danioRecibido(danioAtaque);
+    }
+}
