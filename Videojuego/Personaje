@@ -1,0 +1,65 @@
+package Practi8;
+
+public class Personaje {
+    public String nombre;
+    public int vidaMaxima;
+    public int vida;
+    public int escudo;
+
+    public Personaje(String nombre, int vidaMaxima) {
+        this.nombre = nombre;
+        this.vidaMaxima = vidaMaxima;
+        this.vida = vidaMaxima;
+    }
+
+    public void mostrarEstado() {
+        System.out.println(nombre + ":");
+        System.out.println("Vida: " + vida + "/" + vidaMaxima);
+    }
+
+    public void atacar(Personaje objetivo) {
+        System.out.println(nombre + " golpea a " + objetivo.nombre);
+        objetivo.danioRecibido(5);
+    }
+
+    public void danioRecibido(int danio) {
+        if (!sigueVivo()) {
+            return;
+        }
+
+        if (escudo > 0) {
+            if (danio <= escudo) {
+                escudo -= danio;
+                danio = 0;
+            } else {
+                danio -= escudo;
+                escudo = 0;
+            }
+        }
+
+        vida -= danio;
+        if (vida < 0) {
+            vida = 0;
+        }
+        System.out.println(nombre + " ha recibido daño");
+
+        if (vida == 0) {
+            System.out.println(nombre + " ha caído en la batalla");
+        }
+    }
+
+    public boolean sigueVivo() {
+        return vida > 0;
+    }
+
+    public void curar(int cantidad) {
+        int vidaAntes = vida;
+        vida += cantidad;
+
+        if (vida > vidaMaxima) {
+            vida = vidaMaxima;
+        }
+
+        System.out.println(nombre + " ha recuperado " + (vida - vidaAntes) + " de vida");
+    }
+}
